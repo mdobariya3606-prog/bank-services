@@ -1,6 +1,7 @@
 package org.bank.Bank.Management.service;
 
 import jakarta.transaction.Transactional;
+import org.bank.Bank.Management.exception.AccountNotFoundException;
 import org.bank.Bank.Management.generator.repository.DebitCardSequenceRepository;
 import org.bank.Bank.Management.dto.DebitCardRequestDTO;
 import org.bank.Bank.Management.model.Account;
@@ -31,9 +32,8 @@ public class DebitCardService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account id is required");
         }
 
-        Account account = accountRepo.findById(debitCard
-                .getId())
-                .orElseThrow();
+        Account account = accountRepo.findById(debitCard.getId())
+                .orElseThrow(() -> new AccountNotFoundException(String.valueOf(debitCard.getId())));
 
         if (account.getDebitCard() != null) {
              throw new ResponseStatusException(HttpStatus.CONFLICT, "Debit card already exists");
